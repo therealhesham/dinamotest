@@ -11,7 +11,7 @@ export class VendorService {
   constructor(public prisma: PrismaService ,public jwtService : JwtService){}
   async create(createVendorDto,res,req,next) {
 try {
-await  this.checkAdmin(req)
+// await  this.checkAdmin(req)
 const waitvendor=  await this.prisma.vendor.findFirst({where:{email:createVendorDto.email}})
 if(waitvendor) throw new Error("email is registered already in our database")
 
@@ -54,7 +54,7 @@ res.status(301).json(error.message);
   }
  async findAll(req,res, next) {
   
-   await this.checkAdmin(req);
+  //  await this.checkAdmin(req);
   try {
     console.log("s")
     const findvendors =  await this.prisma.vendor.findMany();
