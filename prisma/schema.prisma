@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+
+
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String  
+  address String
+  city String
+  isAdmin Boolean @default(false)
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Vendor {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  products  Product[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+
+}
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  vendorId    String   @db.ObjectId
+  price       Float
+ stock       Int      
+  categoryId  String?  @db.ObjectId 
+  vendor      Vendor    @relation(fields: [vendorId], references: [id])
+  category    Category? @relation(fields: [categoryId], references: [id])
+  ItemsOrdered ItemsOrdered[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+model ItemsOrdered {
+id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  productId   String?  @db.ObjectId
+  Product    Product? @relation(fields: [productId], references: [id])
+ProductCost  Float?
+  cart    Cart? @relation(fields: [cartId], references: [id])
+cartId        String? @db.ObjectId  
+
+
+
+}
+model Order {//placing order is the final stage in purchacing process
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String @db.ObjectId//it will be extracted from storing jwt or cookies
+   // but provided with random string in test
+  user      User       @relation(fields: [userId], references: [id])
+  total     Float   
+  cart    Cart[]
+ 
+  status    String     
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+
+
+model Cart {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+ 
+  OrderedItems   ItemsOrdered[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  // Order Order[]
+total Float 
+  order Order? @relation(fields: [orderid], references: [id])
+orderid        String? @db.ObjectId  
+ 
+}
