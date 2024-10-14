@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateNeworderDto } from './dto/create-neworder.dto';
 import { UpdateNeworderDto } from './dto/update-neworder.dto';
 import { PrismaService } from 'src/prisma.service';
-import { CreateOrderDto } from 'src/order/dto/create-order.dto';
 import { find } from 'rxjs';
 import { Response } from 'express';
 

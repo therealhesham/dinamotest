@@ -10,13 +10,12 @@ import { ProductsService } from './products/products.service';
 import { NeworderModule } from './neworder/neworder.module';
 import { OrederitemsModule } from './orederitems/orederitems.module';
 import { CartModule } from './cart/cart.module';
-import { OrderModule } from './order/order.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
     JwtModule,
-    UserModule, ProductsModule, VendorModule, NeworderModule, OrederitemsModule, CartModule,OrderModule],
+    UserModule, ProductsModule, VendorModule, NeworderModule, OrederitemsModule, CartModule],
   controllers: [AppController,ProductsController],
   providers: [JwtService,AppService,PrismaService,ProductsService],
 })
