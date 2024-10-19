@@ -1,35 +1,42 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { request, Request } from 'express';
-import { Observable } from 'rxjs';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  /**
-   *
-   */
-  constructor( private jwtService : JwtService) {
-    
+  constructor(private jwtService: JwtService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(request);
+    console.log(token)
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+    try {
+      const payload = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: "hesham"
+        }
+      );
+      // 💡 We're assigning the payload to the request object here
+      // so that we can access it in our route handlers
+      request['user'] = payload;
+    } catch {
+      throw new UnauthorizedException();
+    }
+    return true;
   }
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-const s  = context.switchToHttp().getRequest()
- const token = this.extractTokenFromHeader(Request)
-if(!token){
 
-  return false
-}
- return true;
-  }
-
-
-  private async extractTokenFromHeader(request)
-  {
-  
-  const token = request.cookies?.token;
-  const verify= await this.jwtService.verifyAsync(token)
-return verify  
- 
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

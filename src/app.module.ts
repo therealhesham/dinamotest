@@ -14,7 +14,11 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    JwtModule,
+    JwtModule.register({
+      secret: "hesham",
+      signOptions: { expiresIn: '60s' }, // Adjust as necessary
+    }),
+    // JwtModule,
     UserModule, ProductsModule, VendorModule, NeworderModule, OrederitemsModule, CartModule],
   controllers: [AppController,ProductsController],
   providers: [JwtService,AppService,PrismaService,ProductsService],

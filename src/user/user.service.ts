@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import jwt from 'jsonwebtoken';
 const prisma = new PrismaClient();
 
+
 @Injectable()
 export class UserService {
   /**
@@ -24,25 +25,35 @@ export class UserService {
 if(createUserDto.password != createUserDto.repeatpassword) throw new Error("password isn't Matching");
 const hashedPassword = await bcrypt.hash(createUserDto.password, 5);
 
-
+const findByemail = await prisma.user.findFirst({where:{email:createUserDto.email}})
+if(findByemail) throw new Error("Email is already Registered");
 const createuser =  await prisma.user.create({
       data: {
         email: createUserDto.email,
         password: hashedPassword, // storing password in encrypting mode
  address:createUserDto.address,city:createUserDto.city
-      },
+      },select:{email:true,isAdmin:true}});
+      
+   const token = await this.jwtService.signAsync({sub:"ssss",username:"ssssssssss"})
 
+res.setHeader(`Authorization`,`Bearer ${token}`)
 
-    });
-const token =    await this.jwtService.signAsync({createuser},{secret:"secret_key"})
-res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'lax' });
-  res.send(createUserDto)
+console.log(req.headers)
+   res.status(201).json(`Bearer ${token}`)
 } catch (error) {
-    // console.log(error)
-    res.status(301).json(error.message)
+    // 0console.log(error)
+    res.status(400).json(error)
     
   }  
   }
+async FindAll(){
+
+
+return prisma.user.findMany()
+
+
+}
+
 
 
 

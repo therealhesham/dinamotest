@@ -17,7 +17,10 @@ SwaggerModule.setup('api', app, document);
 app.use(cookieParser())
 app.enableCors({
   origin: '*', 
-  credentials: true,
+  allowedHeaders:['authorization'],
+  exposedHeaders:"*",
+maxAge:2000
+// ,   credentials: false,
 });
 
 

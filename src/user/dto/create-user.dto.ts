@@ -1,19 +1,21 @@
-import { Matches,IsEmail,isString,IsStrongPassword, Min, IsString } from "class-validator";
+import { Matches,IsEmail,isString,IsStrongPassword, Min, IsString, MinLength, IsOptional } from "class-validator";
 
 export class CreateUserDto {
 
 @IsEmail()
 email : string;
 
-@IsStrongPassword()
+
+@MinLength(8)
 password:string
 
-@IsStrongPassword()
+@MinLength(8)
 repeatpassword:string
 
-@Min(8)
+@MinLength(8)
 address:string
 
+@IsOptional()
 @IsString()
 city:string
 
