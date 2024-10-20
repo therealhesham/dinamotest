@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Body, Res, Req, UseGuards, UsePipes, ValidationPipe} from '@nestjs/common';
+import { Controller, Get, Post, Body, Res,Param ,Req, UseGuards, UsePipes, ValidationPipe, Delete} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Request, Response } from 'express';
-// import { AuthGuard } from '../auth/auth/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 // @UseGuards(AuthGuard)
@@ -19,12 +18,40 @@ export class UserController {
     return this.userService.createUser(createUserDto,res,req);
   }
 
+
+
+
+
+
+  @Post("/login")
+  async Login( @Res() res:Response,@Req( ) req:Request) {
+    return this.userService.Login(req,res);
+  }
+
+
+
+
+
+
+
+
 @Get()
 async FindAll(){
 
 return this.userService.FindAll()
 
 }
+
+
+
+@Delete(":id")
+async DeleteByID(@Param('id') id:string){
+  console.log(id)
+return this.userService.DeleteById(id);
+
+}
+
+
 
 
 

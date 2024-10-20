@@ -1,4 +1,4 @@
-import {Next, Req,Injectable } from '@nestjs/common';
+import {Next, Req,Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateVendorDto } from './dto/create-vendor.dto';
 import { UpdateVendorDto } from './dto/update-vendor.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -13,7 +13,7 @@ export class VendorService {
 try {
 console.log(createVendorDto.email)
 const waitvendor=  await this.prisma.vendor.findFirst({where:{email:createVendorDto.email}})
-if(waitvendor) throw new Error("email is registered already in our database")
+if(waitvendor) throw new  HttpException("email is registered already in our database",HttpStatus.NO_CONTENT)
 
 const createvendor =  await this.prisma.vendor.create({data:{email:createVendorDto.email,name:createVendorDto.name}})
 res.status(201).json(createvendor);
@@ -27,7 +27,7 @@ res.status(400).json(error);
   
   
   
-   async findAll(req,res, next) {
+   async findAll(req,res) {
   
   //  await this.checkAdmin(req);
   try {

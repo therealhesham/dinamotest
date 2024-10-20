@@ -11,20 +11,22 @@ export class OrederitemsService {
   async  create(createOrederitemDto: CreateOrederitemDto,res:Response) {
 
     try {
-      
+
   if(!createOrederitemDto.cartId){
 console.log(createOrederitemDto)
     await this.prisma.$transaction(async(t)=>{
 
 const updater =     await t.product.update({where:{id:createOrederitemDto.productId},data:{stock:{decrement:1}}})
+console.log(updater.stock)
 if(updater.stock < 0) throw new Error("Product is not avaiable , try another products")
+console.log(updater.stock < 0)
 
-
-  const createCart = await this.prisma.cart.create({data:{total:createOrederitemDto.cost,OrderedItems:{create:{name:createOrederitemDto.name,productId:createOrederitemDto.productId}}}})
-  return createCart;
+  const createCart = await t.cart.create({data:{total:createOrederitemDto.cost,OrderedItems:{create:{name:createOrederitemDto.name,productId:createOrederitemDto.productId}}}})
+ console.log(createCart)
+  res.send(createCart)
   
     }
-,{ maxWait: 5000, 
+,{ maxWait: 10000, 
   timeout: 10000}
 
 
@@ -40,10 +42,14 @@ await this.prisma.$transaction(async(t)=>{
   if(updater.stock < 0) throw new Error("Product is not avaiable , try another products")
   
 
-    const createCart = await this.prisma.cart.update({where:{id:createOrederitemDto.cartId},data :{total:{increment:createOrederitemDto.cost},OrderedItems:{create:{name:createOrederitemDto.name,productId:createOrederitemDto.productId}}}})
-    return createCart;
+    const createCart = await t.cart.update({where:{id:createOrederitemDto.cartId},data :{total:{increment:createOrederitemDto.cost},OrderedItems:{create:{name:createOrederitemDto.name,productId:createOrederitemDto.productId}}}})
     
-    // const createOrderedItem = this.prisma.itemsOrdered.create({data:{name:createOrederitemDto.name,cartId:createOrederitemDto.cartId,productId:createOrederitemDto.productId}})
+
+    const itemsOrdered = await t.itemsOrdered.create(
+      {data:{productId:createOrederitemDto.productId,name:createOrederitemDto.name,cartId:createCart.id}})
+    console.log("createCart",itemsOrdered)
+    res.send(createCart)
+        // const createOrderedItem = this.prisma.itemsOrdered.create({data:{name:createOrederitemDto.name,cartId:createOrederitemDto.cartId,productId:createOrederitemDto.productId}})
     // return createOrderedItem;
     
       }
@@ -55,18 +61,13 @@ await this.prisma.$transaction(async(t)=>{
       )
 
 
-
-const createCart = this.prisma.itemsOrdered.create({data:{productId:createOrederitemDto.productId,name:createOrederitemDto.name}})
-
-return 'This action adds a new orederitem';
-
 } catch (error) {
-res.status(301).json(error.message)
+res.status(301).json(error)
 }  
 }
 
-  findAll() {
-    return `This action returns all orederitems`;
+ async findAll() {
+    return await this.prisma.cart.findMany();
   }
 
   findOne(id: number) {

@@ -6,6 +6,7 @@ import { NextFunction, Request,Response } from 'express';
 import { RolesGuard } from 'src/auth/auth/roles.guard';
 import { JwtAuthGuard } from 'src/auth/auth/jwt-auth.guard';
 import { AuthGuard } from 'src/auth/auth/auth.guard';
+import { CheckAdmin } from 'src/auth/auth/checkadmin.guard';
 
 
 @Controller('vendor')
@@ -17,16 +18,16 @@ export class VendorController {
     return this.vendorService.create(createVendorDto,res,req,next);
   }
   
-  @UseGuards(AuthGuard)
+  @UseGuards(CheckAdmin)
   @UsePipes(new ValidationPipe())
   @Get()
-  findAll(@Res() req:Request,@Res() res:Response,@Next() next:NextFunction) {
-    return this.vendorService.findAll(req,res,next);
+  findAll(@Res() req:Request,@Res() res:Response) {
+    return this.vendorService.findAll(req,res);
   }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
-  //   return this.vendorService.findOne(id);
+  //   return this.vendorService.findOne(+id);
   // }
 
 }

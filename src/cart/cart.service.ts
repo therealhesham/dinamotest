@@ -16,10 +16,11 @@ export class CartService {
   }
 //this route wil only accessed by admin and handled through admin panel and 
 //authguard will be implemented at the end of the project
-  async findAll() {
+  async findAll(req,res) {
 
- const findmany = await   this.prisma.cart.findMany({include:{OrderedItems:true}});
- return findmany;
+ const findmany = await   this.prisma.cart.findMany();
+ console.log(findmany)
+ res.status(201).json(findmany);
     // return `This action returns all cart`;
   }
 

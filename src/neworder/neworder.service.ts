@@ -19,7 +19,8 @@ export class NeworderService {
 
    const findCart =await this.prisma.cart.findFirst({where:{id:createNeworderDto.cartid}})
    
-   await this.prisma.order.create({data:{status:"neworder",total:findCart.total,userId:createNeworderDto.userId}})
+const neworder =    await this.prisma.order.create({data:{status:"neworder",total:findCart.total,userId:createNeworderDto.userId}})
+res.send(neworder)
 },{maxWait:6000,timeout:5000})
 
 // this.prisma.order.create({data:{status:"",userId:"",total:""}})

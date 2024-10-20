@@ -6,7 +6,9 @@ export class CreateOrederitemDto {
     @IsString()
     name :string
 
-    @MinLength(5)
+
+    
+    @IsOptional()
     cartId:string 
     // id          String   @id @default(auto()) @map("_id") @db.ObjectId
     // name        String
